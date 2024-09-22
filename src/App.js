@@ -1,23 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import axios from 'axios';
+import UserInput from './components/UserInput';
 
 function App() {
+  const [result, setResult] = useState(null);
+
+  const handleFormSubmit = async (data) => {
+    try {
+      const response = await axios.post('http://localhost:5001/api/calculate-tax', data);
+      setResult(`Taxable Income: $${response.data.taxableIncome}, Tax Owed: $${response.data.taxOwed}`);
+    } catch (error) {
+      console.error('Error calculating tax:', error);
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Tax Automation App</h1>
+      <UserInput onSubmit={handleFormSubmit} />
+      {result && <div>{result}</div>}
     </div>
   );
 }
